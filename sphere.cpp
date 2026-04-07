@@ -4,7 +4,6 @@
 #include "config.hh"
 
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 Sphere::Sphere(const Point3& c, float r, const Color& col)
     : center(c), radius(r), color(col), density(0.0f), pressure(0.0f)
@@ -12,18 +11,17 @@ Sphere::Sphere(const Point3& c, float r, const Color& col)
 
 void Sphere::calculate_gravity(float dt)
 {
-    Vector3 gravity(0, -100, 0);
+    Vector3 gravity(0, -1, 0);
+    gravity = gravity * GRAVITY;
 
     if (!(center.y - radius <= FLOOR + 0.01f))
         velocity = (gravity * dt) + velocity;
-
-    center = (velocity * dt) + center;
 }
 
 static float kernel(float radius, float dst)
 {
-    float val = std::max(0.0f, radius * radius - dst * dst) / 10000.0f;
-    return val * val * val;
+    float val = std::max(0.0f, radius - dst);
+    return (val * val * val) / (radius * radius * radius);
 }
 
 void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
@@ -39,8 +37,14 @@ void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
     }
 
     density = den;
-    pressure = 50.0f * (density - 0.6);
-    color.r = den * 100.0f;
+    //pressure = K_PRESSURE * (density - 0.5f);
+    pressure = K_PRESSURE * std::max(0.0f, density - 0.5f);
+
+    color.r = velocity.norm() * 2;
+    color.g = center.y / 50;
+
+    //std::cout << "den: " << den << "\n";
+    //std::cout << "pres: " << pressure << "\n";
 }
 
 void Sphere::calculate_border(float dt)
@@ -66,28 +70,33 @@ void Sphere::calculate_border(float dt)
         velocity.x = -velocity.x * restitution;
     }
 
+
+    if (center.z - radius < FRONT_BORDURE) {
+        center.z = FRONT_BORDURE + radius;
+        velocity.z = -velocity.z * restitution;
+    }
+
+    if (center.z + radius > BACK_BORDURE) {
+        center.z = BACK_BORDURE - radius;
+        velocity.z = -velocity.z * restitution;
+    }
+
 }
 
-float Sphere::calculate_dt()
-{
-    float now = (float)glfwGetTime();
-    if (last_time == 0.0f) last_time = now;
-    float dt = now - last_time;
-    last_time = now;
-    if (dt > 0.05f) dt = 0.05f;
-    return dt;
-}
 
 
-void Sphere::update_pos()
+void Sphere::update_pos(float dt)
 {
-    float dt = calculate_dt();
 
     if (density != 0) {
         velocity = velocity + (force / density) * dt;
-        center = (velocity * dt) + center;
     }
 
-    //calculate_gravity(dt);
+    calculate_gravity(dt);
+
+    center = (velocity * dt) + center;
+
     calculate_border(dt);
+
+    velocity = velocity * 0.994f;
 }

@@ -26,9 +26,13 @@ public:
     Vector3 normal(Point3 P);
     Color find_color(Point3 inter_point);
 
+    float last_time = 0.0f;
+
+    float calculate_dt();
     void update_density();
     void update_force();
     void update();
+    void resolve_collision();
 
 };
 

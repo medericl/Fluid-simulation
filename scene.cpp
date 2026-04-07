@@ -4,6 +4,7 @@
 #include "vector.hh"
 #include "config.hh"
 
+#include <GLFW/glfw3.h>
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -22,7 +23,8 @@ float Scene::sdf_diff(Vector3 p) {
             float buff = (p - s.center).norm() - s.radius;
             ma = std::min(ma, buff);
         }
-        else {
+        else
+        {
             float buff = (p - s.center).norm() - s.radius;
             d = std::min(d, buff);
         }
@@ -46,7 +48,7 @@ float Scene::sdf_smooth(Vector3 p) {
         }
     }
 
-    float k = 100;
+    float k = K_SDF_SMOOTH;
     if (std::abs(d - d1) < k) 
     {
         float h = std::max((k - std::abs(d-d1)) / k, 0.0f);
@@ -119,12 +121,12 @@ Color Scene::shade(Point3 origin, Vector3 ray, float t)
 
 float Scene::ray_march(Vector3 ray, Point3 origin)
 {
-    size_t ray_iteration = 90;
+    size_t ray_iteration = 20;
     float t = 0;
     for (size_t i = 0; i < ray_iteration; i += 1) {
         Point3 p = origin + ray * t;
 
-        float d = sdf(p);
+        float d = sdf_smooth(p);
         if (d < k_close) {
             return t;
         }
@@ -196,22 +198,70 @@ void Scene::update_force()
             Vector3 direction = (s.center - neigh.center) / dist; // le voisin -> la sphere
             float intensity = (s.pressure + neigh.pressure) / 2.0f;
 
-            //std::cout << intensity << "\n";
+            float h = 100.0f;
+            float q = dist / h;
+            float falloff = std::max(0.0f, 1.0f - q) * std::max(0.0f, 1.0f - q);
 
-            float falloof = std::max(0.0f, 1 - (dist / 100.0f));
+            Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f;
+            force = force + (direction * intensity * falloff) + visc_force;
 
-            force = force + (direction * intensity * falloof);
         }
         s.force = force;
     }
 }
 
+void Scene::resolve_collision()
+{
+    for (size_t i = 0; i < list_sphere.size(); i++)
+    {
+        for (size_t j = i + 1; j < list_sphere.size(); j++)
+        {
+            auto& a = list_sphere[i];
+            auto& b = list_sphere[j];
+
+            float dist = (a.center - b.center).norm();
+            float min_distance = (a.radius + b.radius) * MIN_DIST_SPHERE;
+
+            if (dist < min_distance && dist > 0) {
+                Vector3 direction = (a.center - b.center) / dist;
+                float overlap = min_distance - dist;
+
+                a.center = a.center + direction * overlap * 0.5f;
+                b.center = b.center - direction * overlap * 0.5f;
+
+                float vel_along_axis = (a.velocity - b.velocity).dot(direction);
+                if (vel_along_axis < 0) {
+                    a.velocity = a.velocity - direction * vel_along_axis * 0.5f * (1 + restitution);
+                    b.velocity = b.velocity + direction * vel_along_axis * 0.5f * (1 + restitution);
+                }
+            }
+        }
+    }
+}
+
+float Scene::calculate_dt()
+{
+    float now = (float)glfwGetTime();
+    if (last_time == 0.0f) last_time = now;
+    float dt = now - last_time;
+    last_time = now;
+    if (dt > 0.05f) dt = 0.05f;
+    return dt;
+}
+
 void Scene::update()
 {
+
+    float dt = calculate_dt();
+    //float z = 540 + (dt);
+    //float z = 540;
+    //list_sphere.push_back(Sphere(Point3(dt * 4, 200, z), 10, Color(0, 0, 200)));
     update_density();
     update_force();
     for (auto& s : list_sphere)
     {
-        s.update_pos();
+        s.update_pos(dt);
     }
+
+    resolve_collision();
 }
