@@ -2,11 +2,11 @@
 #include "color.hh"
 
 // screen
-inline int WIDTH = 1000;
-inline int HEIGHT = 1000;
+inline int WIDTH = 100;
+inline int HEIGHT = 100;
 inline int CAMERA_ZOOM = 100;
 inline int SIZE_SPHERE = 10;
-inline int NB_PARTICULES = 500; 
+inline int NB_PARTICULES = 1500; 
 
 // ray
 inline float kd = 0.9f;

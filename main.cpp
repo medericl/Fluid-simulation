@@ -61,7 +61,9 @@ static void run_window(int width, int height)
     if (!glfwInit())
         return;
 
-    GLFWwindow* window = glfwCreateWindow(width, height, "Raymarching", nullptr, nullptr);
+    int win_width = width * 4;
+    int win_height = height * 4;
+    GLFWwindow* window = glfwCreateWindow(win_width, win_height, "Raymarching", nullptr, nullptr);
     if (!window) { glfwTerminate(); return; }
     glfwMakeContextCurrent(window);
 
