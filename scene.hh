@@ -33,6 +33,9 @@ public:
     void update_force();
     void update();
     void resolve_collision();
+    void add_big_sphere();
+    void add_drop(int i);
+    void splash();
 
 };
 

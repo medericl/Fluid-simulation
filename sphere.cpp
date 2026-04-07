@@ -47,7 +47,7 @@ void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
     //std::cout << "pres: " << pressure << "\n";
 }
 
-void Sphere::calculate_border(float dt)
+void Sphere::calculate_border()
 {
 
     if (center.y - radius < FLOOR) {
@@ -93,10 +93,9 @@ void Sphere::update_pos(float dt)
     }
 
     calculate_gravity(dt);
+    center = (velocity * dt) + center; // update gravity
 
-    center = (velocity * dt) + center;
-
-    calculate_border(dt);
+    calculate_border();
 
     velocity = velocity * 0.994f;
 }

@@ -22,8 +22,8 @@ std::vector<Sphere> vector_sphere()
     std::uniform_int_distribution<int> dist_x(-80, 80);
     std::uniform_int_distribution<int> dist_z(-30, 30);
     for (int i = 0; i < NB_PARTICULES; i++) {
-        spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
-        //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+        //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
+        spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
     }
 
     return spheres;
@@ -80,8 +80,27 @@ static void run_window(int width, int height)
     Camera camera(Point3(0,150,0), Point3(0,121,96), Vector3(0,1,0), width, height);
     Scene scene(camera, vector_light(), vector_sphere());
 
+    bool b_was_pressed = false;
+    bool s_was_pressed = false;
+
     while (!glfwWindowShouldClose(window)) {
         float x_offset = std::sin(glfwGetTime()) * 300.0f;
+
+        bool b_now = glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS;
+        if (b_now && !b_was_pressed)
+            scene.add_big_sphere();
+        b_was_pressed = b_now;
+
+        bool s_now = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+        if (s_now && !s_was_pressed)
+            scene.splash();
+        s_was_pressed = s_now;
+
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            scene.add_drop(0);
+
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            scene.add_drop(1);
 
         render_to_pixels(width, height, x_offset, pixels, scene);
         glBindTexture(GL_TEXTURE_2D, tex);

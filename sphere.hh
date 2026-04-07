@@ -16,11 +16,12 @@ public:
     float density;
     float pressure;
     Vector3 force;
+    float lifetime = -1.0f; // -1 = permanent, > 0 = expires
 
     void update_pos(float dt);
     void update_density(Point3 center, std::vector<Sphere> &list_sphere);
     void calculate_gravity(float dt);
-    void calculate_border(float dt);
+    void calculate_border();
 };
 
 #endif

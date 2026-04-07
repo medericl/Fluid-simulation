@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include <vector>
 
 Scene::Scene(Camera Camera, std::vector<Light> List_light, std::vector<Sphere> List_sphere)
@@ -187,8 +188,8 @@ void Scene::update_force()
 {
     for (auto& s : list_sphere)
     {
-        Vector3 force(0,0,0);
 
+        Vector3 force(0,0,0);
         for (auto& neigh : list_sphere)
         {
             if (s.center == neigh.center)
@@ -249,19 +250,72 @@ float Scene::calculate_dt()
     return dt;
 }
 
+static constexpr float BIG_SPHERE_LIFETIME = 2.0f;
+static constexpr float BIG_SPHERE_RADIUS   = 35.0f;
+
+void Scene::add_drop(int i)
+{
+    static std::mt19937 rng(std::random_device{}());
+    static std::uniform_int_distribution<int> dist_x(-80, 80);
+    static std::uniform_int_distribution<int> dist_z(-30, 30);
+    int z = 540;
+    if (i == 1) {
+        z += dist_z(rng);
+    }
+    Sphere s(Point3(dist_x(rng), ceiling - SIZE_SPHERE - 1, 540),
+             SIZE_SPHERE, Color(0, 0, 200));
+    list_sphere.push_back(s);
+}
+
+void Scene::splash()
+{
+    Point3 impact(0, FLOOR, 540.0f);
+    float radius = 100.0f;
+    float strength = 1200.0f;
+
+    for (auto& s : list_sphere)
+    {
+        float dist = (s.center - impact).norm();
+        if (dist < radius && dist > 1e-4f)
+        {
+            Vector3 dir = (s.center - impact) / dist;
+            dir.y = std::abs(dir.y) + 0.5f; // force composante vers le haut
+            dir = dir / dir.norm();
+            float falloff = 1.0f - (dist / radius);
+            s.velocity = s.velocity + dir * strength * falloff;
+        }
+    }
+}
+
+void Scene::add_big_sphere()
+{
+    Sphere s(Point3(0, ceiling - BIG_SPHERE_RADIUS - 1, 540.0f), BIG_SPHERE_RADIUS, Color(255, 80, 0));
+    s.velocity = Vector3(0, -500, 0);
+    list_sphere.push_back(s);
+}
+
 void Scene::update()
 {
-
     float dt = calculate_dt();
-    //float z = 540 + (dt);
-    //float z = 540;
-    //list_sphere.push_back(Sphere(Point3(dt * 4, 200, z), 10, Color(0, 0, 200)));
+
+    for (auto& s : list_sphere)
+    {
+        if (s.lifetime > 0) {
+            s.lifetime -= dt;
+            float t = std::max(0.0f, s.lifetime / BIG_SPHERE_LIFETIME);
+            s.radius = SIZE_SPHERE + (BIG_SPHERE_RADIUS - SIZE_SPHERE) * t;
+            if (s.lifetime <= 0) {
+                s.radius = SIZE_SPHERE;
+                s.lifetime = -1.0f;
+            }
+        }
+    }
+
     update_density();
     update_force();
     for (auto& s : list_sphere)
     {
         s.update_pos(dt);
     }
-
     resolve_collision();
 }

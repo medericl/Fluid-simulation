@@ -5,8 +5,8 @@
 inline int WIDTH = 100;
 inline int HEIGHT = 100;
 inline int CAMERA_ZOOM = 100;
-inline int SIZE_SPHERE = 5;
-inline int NB_PARTICULES = 1000; 
+inline int SIZE_SPHERE = 10;
+inline int NB_PARTICULES = 1500; 
 
 // ray
 inline float kd = 0.9f;
@@ -30,6 +30,7 @@ inline float FRONT_BORDURE = 409;
 
 // physics
 inline float GRAVITY = 300;
+//inline float GRAVITY = 0;
 inline float MIN_DIST_SPHERE = 1.f;
 inline float restitution = 0.1f;
 
