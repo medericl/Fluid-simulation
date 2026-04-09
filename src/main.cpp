@@ -57,23 +57,23 @@ std::vector<Sphere> vector_sphere()
         Sphere(Point3(-199, 199, 540), 10, Color(0,0,200)), 
     };
 
-    for (int i = 0; i < 34; i++) {
-        //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
-        float x = spheres.at(i).center.x;
-        float y = spheres.at(i).center.y;
-        float z = spheres.at(i).center.z;
-        spheres.push_back(Sphere(Point3(x, y, z), SIZE_SPHERE, Color(0, 0, 200)));
-        spheres.push_back(Sphere(Point3(y, y, z), SIZE_SPHERE, Color(0, 0, 200)));
-        spheres.push_back(Sphere(Point3(y, x, z), SIZE_SPHERE, Color(0, 0, 200)));
-    }
-
-    //std::mt19937 rng(42);
-    //std::uniform_int_distribution<int> dist_x(-80, 80);
-    //std::uniform_int_distribution<int> dist_z(-30, 30);
-    //for (int i = 0; i < NB_PARTICULES; i++) {
+    //for (int i = 0; i < 34; i++) {
     //    //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
-    //    spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+    //    float x = spheres.at(i).center.x;
+    //    float y = spheres.at(i).center.y;
+    //    float z = spheres.at(i).center.z;
+    //    spheres.push_back(Sphere(Point3(x, y, z), SIZE_SPHERE, Color(0, 0, 200)));
+    //    spheres.push_back(Sphere(Point3(y, y, z), SIZE_SPHERE, Color(0, 0, 200)));
+    //    spheres.push_back(Sphere(Point3(y, x, z), SIZE_SPHERE, Color(0, 0, 200)));
     //}
+
+    std::mt19937 rng(42);
+    std::uniform_int_distribution<int> dist_x(-80, 80);
+    std::uniform_int_distribution<int> dist_z(-30, 30);
+    for (int i = 0; i < NB_PARTICULES; i++) {
+        //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
+        spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+    }
 
     return spheres;
 }

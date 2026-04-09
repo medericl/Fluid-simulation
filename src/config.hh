@@ -6,7 +6,7 @@ inline int WIDTH = 200;
 inline int HEIGHT = 100;
 inline int CAMERA_ZOOM = 100;
 inline int SIZE_SPHERE = 10;
-inline int NB_PARTICULES = 200; 
+inline int NB_PARTICULES = 1000; 
 
 // ray
 inline float kd = 0.9f;

@@ -1,8 +1,8 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -fopenmp
-DEBUG_FLAGS = -std=c++17 -Wall -Wextra -g -O0 -fopenmp
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -fopenmp -Isrc -Iui
+DEBUG_FLAGS = -std=c++17 -Wall -Wextra -g -O0 -fopenmp -Isrc -Iui
 
-SRC = $(wildcard *.cpp)
+SRC = $(wildcard src/*.cpp) $(wildcard ui/*.cpp)
 OBJ = $(SRC:.cpp=.o)
 
 main: $(OBJ)
@@ -12,5 +12,4 @@ debug: $(SRC)
 	$(CXX) $(DEBUG_FLAGS) $(SRC) -o ray_debug -lglfw -lGL
 
 clean:
-	rm -f *.o ray ray_debug
-
+	rm -f src/*.o ui/*.o ray ray_debug
