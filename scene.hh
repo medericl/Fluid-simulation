@@ -27,6 +27,7 @@ public:
     Color find_color(Point3 inter_point);
 
     float last_time = 0.0f;
+    float time_accumulator = 0.0f;
 
     float calculate_dt();
     void update_density();
@@ -36,6 +37,7 @@ public:
     void add_big_sphere();
     void add_drop(int i);
     void splash();
+    void resize_spheres();
 
 };
 

@@ -32,13 +32,13 @@ void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
         if (s.center != center)
         {
             auto dist = (s.center - center).norm();
-            den += kernel(100.0f, dist);
+            den += kernel(RADIUS_DENSITY, dist);
         }
     }
 
     density = den;
     //pressure = K_PRESSURE * (density - 0.5f);
-    pressure = K_PRESSURE * std::max(0.0f, density - 0.5f);
+    pressure = K_PRESSURE * std::max(0.0f, density - DENSITY_ID);
 
     color.r = velocity.norm() * 2;
     color.g = center.y / 50;

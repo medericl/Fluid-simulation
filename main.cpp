@@ -6,6 +6,11 @@
 #include "scene.hh"
 #include "vector.hh"
 
+#include "ui.hh"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl2.h"
+
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <random>
@@ -16,15 +21,59 @@ std::vector<Sphere> vector_sphere()
 {
     std::vector<Sphere> spheres = {
         Sphere(Point3(-199, 150, 540), SIZE_SPHERE, Color(1,0,200)), 
+        Sphere(Point3(50, 120, 540), 10, Color(2,0,200)), 
+        Sphere(Point3(-120, 180, 540), 10, Color(3,0,200)), 
+        Sphere(Point3(-199, 100, 540), 10, Color(4,0,200)), 
+        Sphere(Point3(-10, 100, 540), 10, Color(5,0,200)), 
+        Sphere(Point3(-150, 100, 540), 10, Color(6,0,200)), 
+        Sphere(Point3(80, 100, 540), 10, Color(7,0,200)), 
+        Sphere(Point3(160, 100, 540), 10, Color(8,0,200)), 
+        Sphere(Point3(190, 100, 540), 10, Color(9,0,200)), 
+        Sphere(Point3(-80, 140, 540), 10, Color(10,0,200)), 
+        Sphere(Point3(-20, 140, 540), 10, Color(11,0,200)), 
+        Sphere(Point3(80, 140, 540), 10, Color(12,0,200)), 
+        Sphere(Point3(130, 140, 540), 10, Color(13,0,200)), 
+        Sphere(Point3(-170, 140, 540), 10, Color(14,0,200)), 
+        Sphere(Point3(170, 180, 540), 10, Color(15,0,200)), 
+        Sphere(Point3(-30, 190, 540), 10, Color(16,0,200)), 
+        Sphere(Point3(0, 196, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-80, -180, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(80, -80, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(120,-130, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-80, -100, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-120,-150, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-30, -50, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(38,20, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-100, -50, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(138,20, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-100, 50, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(100, 50, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(160, 160, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(199, 199, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-199, -199, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(199, -199, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(-199, 199, 540), 10, Color(0,0,200)), 
     };
 
-    std::mt19937 rng(42);
-    std::uniform_int_distribution<int> dist_x(-80, 80);
-    std::uniform_int_distribution<int> dist_z(-30, 30);
-    for (int i = 0; i < NB_PARTICULES; i++) {
+    for (int i = 0; i < 34; i++) {
         //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
-        spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+        float x = spheres.at(i).center.x;
+        float y = spheres.at(i).center.y;
+        float z = spheres.at(i).center.z;
+        spheres.push_back(Sphere(Point3(x, y, z), SIZE_SPHERE, Color(0, 0, 200)));
+        spheres.push_back(Sphere(Point3(y, y, z), SIZE_SPHERE, Color(0, 0, 200)));
+        spheres.push_back(Sphere(Point3(y, x, z), SIZE_SPHERE, Color(0, 0, 200)));
     }
+
+    //std::mt19937 rng(42);
+    //std::uniform_int_distribution<int> dist_x(-80, 80);
+    //std::uniform_int_distribution<int> dist_z(-30, 30);
+    //for (int i = 0; i < NB_PARTICULES; i++) {
+    //    //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
+    //    spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+    //}
 
     return spheres;
 }
@@ -61,11 +110,17 @@ static void run_window(int width, int height)
     if (!glfwInit())
         return;
 
-    int win_width = width * 4;
-    int win_height = height * 4;
+    int win_width = width * 5;
+    int win_height = height * 5;
     GLFWwindow* window = glfwCreateWindow(win_width, win_height, "Raymarching", nullptr, nullptr);
     if (!window) { glfwTerminate(); return; }
     glfwMakeContextCurrent(window);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL2_Init();
 
     std::vector<unsigned char> pixels(width * height * 3);
 
@@ -113,9 +168,24 @@ static void run_window(int width, int height)
         glTexCoord2f(1, 1); glVertex2f( 1,  1);
         glTexCoord2f(0, 1); glVertex2f(-1,  1);
         glEnd();
+        glDisable(GL_TEXTURE_2D);
+
+        ImGui_ImplOpenGL2_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        render_ui(scene);
+
+        ImGui::Render();
+        ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL2_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glDeleteTextures(1, &tex);
     glfwDestroyWindow(window);

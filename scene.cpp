@@ -107,7 +107,8 @@ Color Scene::shade(Point3 origin, Vector3 ray, float t)
     for (auto& light : list_light)
     {
         Vector3 L = (light.origin - P) / (light.origin - P).norm(); // source lumineuse
-        Color color_object = find_color(P);
+        //Color color_object = find_color(P);
+        Color color_object = Color(0,0,200);
         //Color color_object = Color(N.x, N.y, N.z);
 
         Color diffuse = color_object * std::max(0.0f, L.dot(N)) * 0.4;
@@ -155,7 +156,7 @@ void Scene::ray_tracing(Image& image)
 
     Point3 left = p_i.p_left_up;
     Point3 right = p_i.p_right_up;
-    #pragma omp parallel for schedule(dynamic) // gpu
+    #pragma omp parallel for schedule(dynamic) // parallelism
     for (int y = 0; y < height; y++) {
         double t_y = y / (double)(height - 1);
         Point3 left_row = left + (p_i.p_left_down - left) * t_y;
@@ -188,7 +189,6 @@ void Scene::update_force()
 {
     for (auto& s : list_sphere)
     {
-
         Vector3 force(0,0,0);
         for (auto& neigh : list_sphere)
         {
@@ -203,7 +203,7 @@ void Scene::update_force()
             float q = dist / h;
             float falloff = std::max(0.0f, 1.0f - q) * std::max(0.0f, 1.0f - q);
 
-            Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f;
+            Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f; // I don't know what to do with that
             force = force + (direction * intensity * falloff) + visc_force;
 
         }
@@ -244,10 +244,10 @@ float Scene::calculate_dt()
 {
     float now = (float)glfwGetTime();
     if (last_time == 0.0f) last_time = now;
-    float dt = now - last_time;
+    float elapsed = now - last_time;
     last_time = now;
-    if (dt > 0.05f) dt = 0.05f;
-    return dt;
+    if (elapsed > 0.05f) elapsed = 0.05f;
+    return elapsed;
 }
 
 static constexpr float BIG_SPHERE_LIFETIME = 2.0f;
@@ -287,6 +287,13 @@ void Scene::splash()
     }
 }
 
+void Scene::resize_spheres()
+{
+    for (auto& s : list_sphere)
+        if (s.lifetime < 0)
+            s.radius = SIZE_SPHERE;
+}
+
 void Scene::add_big_sphere()
 {
     Sphere s(Point3(0, ceiling - BIG_SPHERE_RADIUS - 1, 540.0f), BIG_SPHERE_RADIUS, Color(255, 80, 0));
@@ -294,22 +301,30 @@ void Scene::add_big_sphere()
     list_sphere.push_back(s);
 }
 
+//void Scene::update()
+//{
+//    float elapsed = calculate_dt();
+//    time_accumulator += elapsed;
+//
+//    int steps = 0;
+//    while (time_accumulator >= FIXED_DT && steps < MAX_SUBSTEPS)
+//    {
+//        update_density();
+//        update_force();
+//        for (auto& s : list_sphere)
+//        {
+//            s.update_pos(FIXED_DT);
+//        }
+//        resolve_collision();
+//
+//        time_accumulator -= FIXED_DT;
+//        steps++;
+//    }
+//}
+
 void Scene::update()
 {
     float dt = calculate_dt();
-
-    for (auto& s : list_sphere)
-    {
-        if (s.lifetime > 0) {
-            s.lifetime -= dt;
-            float t = std::max(0.0f, s.lifetime / BIG_SPHERE_LIFETIME);
-            s.radius = SIZE_SPHERE + (BIG_SPHERE_RADIUS - SIZE_SPHERE) * t;
-            if (s.lifetime <= 0) {
-                s.radius = SIZE_SPHERE;
-                s.lifetime = -1.0f;
-            }
-        }
-    }
 
     update_density();
     update_force();
