@@ -4,6 +4,7 @@
 #include "config.hh"
 
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 Sphere::Sphere(const Point3& c, float r, const Color& col)
     : center(c), radius(r), color(col), density(0.0f), pressure(0.0f)
@@ -15,13 +16,13 @@ void Sphere::calculate_gravity(float dt)
     gravity = gravity * GRAVITY;
 
     if (!(center.y - radius <= FLOOR + 0.01f))
-        velocity = (gravity * dt) + velocity;
+        velocity = velocity + (gravity * dt);
 }
 
 static float kernel(float radius, float dst)
 {
     float val = std::max(0.0f, radius - dst);
-    return (val * val * val) / (radius * radius * radius);
+    return (val * val * val);
 }
 
 void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
@@ -37,8 +38,12 @@ void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
     }
 
     density = den;
-    //pressure = K_PRESSURE * (density - 0.5f);
-    pressure = K_PRESSURE * std::max(0.0f, density - DENSITY_ID);
+    pressure = K_PRESSURE * (density - 0.5f);
+    //pressure = K_PRESSURE * std::max(0.0f, density - DENSITY_ID);
+    if (pressure < 0) {
+        pressure *= 0.1f;
+    }
+    std::cout << pressure << "\n";
 
     color.r = velocity.norm() * 2;
     color.g = center.y / 50;
@@ -83,19 +88,33 @@ void Sphere::calculate_border()
 
 }
 
+float Sphere::Calculate_dt()
+{
+    float now = (float)glfwGetTime();
+    if (last_time == 0.0f) last_time = now;
+    float dt = now - last_time;
+    last_time = now;
+    if (dt > 0.05f) dt = 0.05f;
+    return dt;
+}
 
 
-void Sphere::update_pos(float dt)
+
+void Sphere::update_pos(float a)
 {
 
+    float dt = a;
+    dt = Calculate_dt();
     if (density != 0) {
+        //std::cout << velocity << " old\n";
         velocity = velocity + (force / density) * dt;
+        //std::cout << velocity << " new\n";
     }
 
-    calculate_gravity(dt);
-    center = (velocity * dt) + center; // update gravity
+    //calculate_gravity(dt);
+    center = center + (velocity * dt);
 
     calculate_border();
 
-    velocity = velocity * 0.994f;
+    //velocity = velocity * 0.994f;
 }

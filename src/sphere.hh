@@ -18,10 +18,15 @@ public:
     Vector3 force;
     float lifetime = -1.0f; // -1 = permanent, > 0 = expires
 
+    float last_time = 0.0f;
+
     void update_pos(float dt);
     void update_density(Point3 center, std::vector<Sphere> &list_sphere);
     void calculate_gravity(float dt);
     void calculate_border();
+
+
+    float Calculate_dt();
 };
 
 #endif

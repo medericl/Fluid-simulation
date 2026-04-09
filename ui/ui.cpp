@@ -1,5 +1,5 @@
 #include "ui.hh"
-#include "config.hh"
+#include "../src/config.hh"
 #include "imgui.h"
 
 static void color_edit(const char* label, Color& c)
@@ -50,12 +50,13 @@ void render_ui(Scene& scene)
         ImGui::SliderFloat("Gravity",        &GRAVITY,        0.0f, 1000.0f);
         ImGui::SliderFloat("Restitution",    &restitution,    0.0f, 1.0f);
         ImGui::SliderFloat("Min dist",       &MIN_DIST_SPHERE,0.1f, 5.0f);
-        ImGui::SliderFloat("K Pressure",     &K_PRESSURE,     0.0f, 20.0f);
-        ImGui::SliderFloat("K SDF Smooth",   &K_SDF_SMOOTH,   0.0f, 50.0f);
-        ImGui::SliderFloat("Radius density", &RADIUS_DENSITY, 1.0f, 300.0f);
+        ImGui::SliderFloat("K Pressure",     &K_PRESSURE,     0.0f, 200.0f);
+        //ImGui::SliderFloat("Density ref",    &DENSITY_ID,     0.0f, 5.0f);
         ImGui::SliderFloat("Density ref",    &DENSITY_ID,     0.0f, 5.0f);
-        ImGui::SliderFloat("Fixed DT",      &FIXED_DT,       0.0001f, 0.01f, "%.4f");
-        ImGui::SliderInt("Max substeps",    &MAX_SUBSTEPS,    1, 50);
+        ImGui::SliderFloat("Radius density", &RADIUS_DENSITY, 1.0f, 300.0f);
+        ImGui::SliderFloat("K SDF Smooth",   &K_SDF_SMOOTH,   0.0f, 100.0f);
+        // ImGui::SliderFloat("Fixed DT",      &FIXED_DT,       0.0001f, 0.01f, "%.4f");
+        // ImGui::SliderInt("Max substeps",    &MAX_SUBSTEPS,    1, 50);
     }
 
     ImGui::Separator();

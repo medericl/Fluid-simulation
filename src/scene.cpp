@@ -199,12 +199,17 @@ void Scene::update_force()
             Vector3 direction = (s.center - neigh.center) / dist; // le voisin -> la sphere
             float intensity = (s.pressure + neigh.pressure) / 2.0f;
 
+            //std::cout << intensity << "\n";
+
             float h = 100.0f;
             float q = dist / h;
-            float falloff = std::max(0.0f, 1.0f - q) * std::max(0.0f, 1.0f - q);
 
-            Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f; // I don't know what to do with that
-            force = force + (direction * intensity * falloff) + visc_force;
+            //float falloff = std::max(0.0f, 1.0f - q) * std::max(0.0f, 1.0f - q);
+
+            //Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f; // I don't know what to do with that
+
+            //force = force + (direction * intensity * falloff) + visc_force;
+            force = force + (direction * intensity);
 
         }
         s.force = force;
@@ -232,8 +237,10 @@ void Scene::resolve_collision()
 
                 float vel_along_axis = (a.velocity - b.velocity).dot(direction);
                 if (vel_along_axis < 0) {
-                    a.velocity = a.velocity - direction * vel_along_axis * 0.5f * (1 + restitution);
-                    b.velocity = b.velocity + direction * vel_along_axis * 0.5f * (1 + restitution);
+                    //a.velocity = a.velocity - direction * vel_along_axis * 0.5f * (1 + restitution);
+                    //b.velocity = b.velocity + direction * vel_along_axis * 0.5f * (1 + restitution);
+                    a.velocity = a.velocity - direction * vel_along_axis * 0.5f;
+                    b.velocity = b.velocity + direction * vel_along_axis * 0.5f;
                 }
             }
         }

@@ -6,10 +6,10 @@
 #include "scene.hh"
 #include "vector.hh"
 
-#include "ui.hh"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl2.h"
+#include "../ui/ui.hh"
+#include "../ui/imgui.h"
+#include "../ui/imgui_impl_glfw.h"
+#include "../ui/imgui_impl_opengl2.h"
 
 #include <GLFW/glfw3.h>
 #include <cmath>
@@ -21,40 +21,75 @@ std::vector<Sphere> vector_sphere()
 {
     std::vector<Sphere> spheres = {
         Sphere(Point3(-199, 150, 540), SIZE_SPHERE, Color(1,0,200)), 
-        Sphere(Point3(50, 120, 540), 10, Color(2,0,200)), 
-        Sphere(Point3(-120, 180, 540), 10, Color(3,0,200)), 
-        Sphere(Point3(-199, 100, 540), 10, Color(4,0,200)), 
-        Sphere(Point3(-10, 100, 540), 10, Color(5,0,200)), 
-        Sphere(Point3(-150, 100, 540), 10, Color(6,0,200)), 
-        Sphere(Point3(80, 100, 540), 10, Color(7,0,200)), 
-        Sphere(Point3(160, 100, 540), 10, Color(8,0,200)), 
-        Sphere(Point3(190, 100, 540), 10, Color(9,0,200)), 
-        Sphere(Point3(-80, 140, 540), 10, Color(10,0,200)), 
-        Sphere(Point3(-20, 140, 540), 10, Color(11,0,200)), 
-        Sphere(Point3(80, 140, 540), 10, Color(12,0,200)), 
-        Sphere(Point3(130, 140, 540), 10, Color(13,0,200)), 
-        Sphere(Point3(-170, 140, 540), 10, Color(14,0,200)), 
-        Sphere(Point3(170, 180, 540), 10, Color(15,0,200)), 
-        Sphere(Point3(-30, 190, 540), 10, Color(16,0,200)), 
-        Sphere(Point3(0, 196, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-80, -180, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(80, -80, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(120,-130, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-80, -100, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-120,-150, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-30, -50, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(38,20, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-100, -50, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(138,20, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-100, 50, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(100, 50, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-138,10, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-138,10, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(160, 160, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(199, 199, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-199, -199, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(199, -199, 540), 10, Color(0,0,200)), 
-        Sphere(Point3(-199, 199, 540), 10, Color(0,0,200)), 
+        Sphere(Point3(50, 120, 540), SIZE_SPHERE, Color(2,0,200)), 
+        Sphere(Point3(-120, 180, 540), SIZE_SPHERE, Color(3,0,200)), 
+        Sphere(Point3(-199, 100, 540), SIZE_SPHERE, Color(4,0,200)), 
+        Sphere(Point3(-10, 100, 540), SIZE_SPHERE, Color(5,0,200)), 
+        Sphere(Point3(-150, 100, 540), SIZE_SPHERE, Color(6,0,200)), 
+        Sphere(Point3(80, 100, 540), SIZE_SPHERE, Color(7,0,200)), 
+        Sphere(Point3(160, 100, 540), SIZE_SPHERE, Color(8,0,200)), 
+        Sphere(Point3(190, 100, 540), SIZE_SPHERE, Color(9,0,200)), 
+        Sphere(Point3(-80, 140, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-20, 140, 540), SIZE_SPHERE, Color(11,0,200)), 
+        Sphere(Point3(80, 140, 540), SIZE_SPHERE, Color(12,0,200)), 
+        Sphere(Point3(130, 140, 540), SIZE_SPHERE, Color(13,0,200)), 
+        Sphere(Point3(-170, 140, 540), SIZE_SPHERE, Color(14,0,200)), 
+        Sphere(Point3(170, 180, 540), SIZE_SPHERE, Color(15,0,200)), 
+        Sphere(Point3(-30, 190, 540), SIZE_SPHERE, Color(16,0,200)), 
+        Sphere(Point3(0, 196, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-80, -180, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(80, -80, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(120,-130, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-80, -100, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-120,-150, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-30, -50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(38,20, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-100, -50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(138,20, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-100, 50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(100, 50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(160, 160, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(199, 199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-199, -199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(199, -199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-199, 199, 540), SIZE_SPHERE, Color(0,0,200)), 
+
+        Sphere(Point3(-199, 150, 540), SIZE_SPHERE, Color(1,0,200)), 
+        Sphere(Point3(50, 120, 540), SIZE_SPHERE, Color(2,0,200)), 
+        Sphere(Point3(-120, 180, 540), SIZE_SPHERE, Color(3,0,200)), 
+        Sphere(Point3(-199, 100, 540), SIZE_SPHERE, Color(4,0,200)), 
+        Sphere(Point3(-10,100, 540), SIZE_SPHERE, Color(5,0,200)), 
+        Sphere(Point3(-150, 100, 540), SIZE_SPHERE, Color(6,0,200)), 
+        Sphere(Point3(80, 100, 540), SIZE_SPHERE, Color(7,0,200)), 
+        Sphere(Point3(160, 100, 540), SIZE_SPHERE, Color(8,0,200)), 
+        Sphere(Point3(190, 100, 540), SIZE_SPHERE, Color(9,0,200)), 
+        Sphere(Point3(-80, 140, 540), SIZE_SPHERE, Color(10,0,200)), 
+        Sphere(Point3(-20, 140, 540), SIZE_SPHERE, Color(11,0,200)), 
+        Sphere(Point3(80, 140, 540), SIZE_SPHERE, Color(12,0,200)), 
+        Sphere(Point3(130, 140, 540), SIZE_SPHERE, Color(13,0,200)), 
+        Sphere(Point3(-170, 140, 540), SIZE_SPHERE, Color(14,0,200)), 
+        Sphere(Point3(170, 180, 540), SIZE_SPHERE, Color(15,0,200)), 
+        Sphere(Point3(-30, 190, 540), SIZE_SPHERE, Color(16,0,200)), 
+        Sphere(Point3(0, 196, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-80, -180, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(80, -80, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(120,-130, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-80, -100, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-120,-150, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-30, -50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(38,20, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-100, -50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(138,20, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-100, 50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(100, 50, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-138,10, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(199, 199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-199, -199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(199, -199, 540), SIZE_SPHERE, Color(0,0,200)), 
+        Sphere(Point3(-199, 199, 540), SIZE_SPHERE, Color(0,0,200)), 
     };
 
     //for (int i = 0; i < 34; i++) {
@@ -70,10 +105,10 @@ std::vector<Sphere> vector_sphere()
     std::mt19937 rng(42);
     std::uniform_int_distribution<int> dist_x(-80, 80);
     std::uniform_int_distribution<int> dist_z(-30, 30);
-    for (int i = 0; i < NB_PARTICULES; i++) {
-        //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
-        spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
-    }
+    //for (int i = 0; i < NB_PARTICULES; i++) {
+    //    //spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540 + dist_x(rng)), SIZE_SPHERE, Color(0, 0, 200)));
+    //    spheres.push_back(Sphere(Point3(dist_x(rng), 199, 540), SIZE_SPHERE, Color(0, 0, 200)));
+    //}
 
     return spheres;
 }
@@ -110,8 +145,8 @@ static void run_window(int width, int height)
     if (!glfwInit())
         return;
 
-    int win_width = width * 5;
-    int win_height = height * 5;
+    int win_width = width * 2;
+    int win_height = height * 2;
     GLFWwindow* window = glfwCreateWindow(win_width, win_height, "Raymarching", nullptr, nullptr);
     if (!window) { glfwTerminate(); return; }
     glfwMakeContextCurrent(window);
@@ -132,7 +167,8 @@ static void run_window(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
-    Camera camera(Point3(0,150,0), Point3(0,121,96), Vector3(0,1,0), width, height);
+    //Camera camera(Point3(0,150,0), Point3(0,121,96), Vector3(0,1,0), width, height);
+    Camera camera(Point3(0,0,0), Point3(0,0,100), Vector3(0,1,0), width, height);
     Scene scene(camera, vector_light(), vector_sphere());
 
     bool b_was_pressed = false;
