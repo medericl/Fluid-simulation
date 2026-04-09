@@ -24,9 +24,6 @@ public:
     void update_density(Point3 center, std::vector<Sphere> &list_sphere);
     void calculate_gravity(float dt);
     void calculate_border();
-
-
-    float Calculate_dt();
 };
 
 #endif

@@ -107,8 +107,8 @@ Color Scene::shade(Point3 origin, Vector3 ray, float t)
     for (auto& light : list_light)
     {
         Vector3 L = (light.origin - P) / (light.origin - P).norm(); // source lumineuse
-        //Color color_object = find_color(P);
-        Color color_object = Color(0,0,200);
+        Color color_object = find_color(P);
+        //Color color_object = Color(0,0,200);
         //Color color_object = Color(N.x, N.y, N.z);
 
         Color diffuse = color_object * std::max(0.0f, L.dot(N)) * 0.4;
@@ -185,6 +185,14 @@ void Scene::update_density()
     }
 }
 
+// spike at r=0 
+static float spiky_grad(float h, float r)
+{
+    if (r >= h || r < 1e-6f) return 0.0f;
+    float diff = h - r;
+    return (diff * diff) / (h * h * h);
+}
+
 void Scene::update_force()
 {
     for (auto& s : list_sphere)
@@ -192,25 +200,20 @@ void Scene::update_force()
         Vector3 force(0,0,0);
         for (auto& neigh : list_sphere)
         {
-            if (s.center == neigh.center)
+            if (&s == &neigh)
                 continue;
-            
+
             float dist = (s.center - neigh.center).norm();
-            Vector3 direction = (s.center - neigh.center) / dist; // le voisin -> la sphere
-            float intensity = (s.pressure + neigh.pressure) / 2.0f;
+            if (dist >= RADIUS_DENSITY || dist < 1e-6f)
+                continue;
 
-            //std::cout << intensity << "\n";
+            Vector3 direction = (s.center - neigh.center) / dist; // from neigh -> s
+            float grad = spiky_grad(RADIUS_DENSITY, dist);
 
-            float h = 100.0f;
-            float q = dist / h;
+            float pressure_term = (s.pressure + neigh.pressure) / (2.0f * neigh.density);
+            force = force + (direction * MASS * pressure_term * grad);
 
-            //float falloff = std::max(0.0f, 1.0f - q) * std::max(0.0f, 1.0f - q);
-
-            //Vector3 visc_force = (neigh.velocity - s.velocity) * falloff * 0.1f; // I don't know what to do with that
-
-            //force = force + (direction * intensity * falloff) + visc_force;
-            force = force + (direction * intensity);
-
+            //std::cout << force << "\n";
         }
         s.force = force;
     }
@@ -308,36 +311,36 @@ void Scene::add_big_sphere()
     list_sphere.push_back(s);
 }
 
-//void Scene::update()
-//{
-//    float elapsed = calculate_dt();
-//    time_accumulator += elapsed;
-//
-//    int steps = 0;
-//    while (time_accumulator >= FIXED_DT && steps < MAX_SUBSTEPS)
-//    {
-//        update_density();
-//        update_force();
-//        for (auto& s : list_sphere)
-//        {
-//            s.update_pos(FIXED_DT);
-//        }
-//        resolve_collision();
-//
-//        time_accumulator -= FIXED_DT;
-//        steps++;
-//    }
-//}
-
 void Scene::update()
 {
-    float dt = calculate_dt();
+    float elapsed = calculate_dt();
+    time_accumulator += elapsed;
 
-    update_density();
-    update_force();
-    for (auto& s : list_sphere)
+    int steps = 0;
+    while (time_accumulator >= FIXED_DT && steps < MAX_SUBSTEPS)
     {
-        s.update_pos(dt);
+        update_density();
+        update_force();
+        for (auto& s : list_sphere)
+        {
+            s.update_pos(FIXED_DT);
+        }
+        resolve_collision();
+
+        time_accumulator -= FIXED_DT;
+        steps++;
     }
-    resolve_collision();
 }
+
+//void Scene::update()
+//{
+//    float dt = calculate_dt();
+//
+//    update_density();
+//    update_force();
+//    for (auto& s : list_sphere)
+//    {
+//        s.update_pos(dt);
+//    }
+//    resolve_collision();
+//}

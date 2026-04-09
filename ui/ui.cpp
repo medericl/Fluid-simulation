@@ -50,7 +50,8 @@ void render_ui(Scene& scene)
         ImGui::SliderFloat("Gravity",        &GRAVITY,        0.0f, 1000.0f);
         ImGui::SliderFloat("Restitution",    &restitution,    0.0f, 1.0f);
         ImGui::SliderFloat("Min dist",       &MIN_DIST_SPHERE,0.1f, 5.0f);
-        ImGui::SliderFloat("K Pressure",     &K_PRESSURE,     0.0f, 200.0f);
+        ImGui::SliderFloat("Mass",           &MASS,           0.1f, 10.0f);
+        ImGui::SliderFloat("K Pressure",     &K_PRESSURE,     0.0f, 10000.0f);
         //ImGui::SliderFloat("Density ref",    &DENSITY_ID,     0.0f, 5.0f);
         ImGui::SliderFloat("Density ref",    &DENSITY_ID,     0.0f, 5.0f);
         ImGui::SliderFloat("Radius density", &RADIUS_DENSITY, 1.0f, 300.0f);

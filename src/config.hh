@@ -3,7 +3,7 @@
 
 // simulation
 inline int WIDTH = 500;
-inline int HEIGHT = 500;
+inline int HEIGHT = 200;
 inline int CAMERA_ZOOM = 100;
 inline int SIZE_SPHERE = 20;
 inline int NB_PARTICULES = 100; 
@@ -29,14 +29,15 @@ inline float BACK_BORDURE = 571;
 inline float FRONT_BORDURE = 409;
 
 // physics
-inline float GRAVITY = 300;
+inline float GRAVITY = 0;
 
-inline float FIXED_DT = 0.004f;
+inline float FIXED_DT = 0.001f;
 inline int MAX_SUBSTEPS = 200;
 
+inline float MASS = 1.0f;
 inline float MIN_DIST_SPHERE = 1.f; // distance entre les spheres
 inline float restitution = 0.1f;
-inline float K_PRESSURE = 100.0f;
-inline float DENSITY_ID = 0.5f;
-inline float RADIUS_DENSITY = 80.0f; // distance calcul densité
+inline float K_PRESSURE = 5000.0f; // gas constant
+inline float DENSITY_ID = 1.0f; // rest density
+inline float RADIUS_DENSITY = 150.0f; // H (smoothing radius)
 inline float K_SDF_SMOOTH = 0.0f;

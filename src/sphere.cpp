@@ -19,10 +19,14 @@ void Sphere::calculate_gravity(float dt)
         velocity = velocity + (gravity * dt);
 }
 
-static float kernel(float radius, float dst)
+// smooth
+static float poly6(float h, float r2)
 {
-    float val = std::max(0.0f, radius - dst);
-    return (val * val * val);
+    float h2 = h * h;
+    if (r2 >= h2) return 0.0f;
+    float diff = h2 - r2;
+    float h6 = h2 * h2 * h2;
+    return (diff * diff * diff) / h6;
 }
 
 void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
@@ -30,26 +34,17 @@ void Sphere::update_density(Point3 center, std::vector<Sphere> &list_sphere)
     float den = 0;
     for (auto& s: list_sphere)
     {
-        if (s.center != center)
-        {
-            auto dist = (s.center - center).norm();
-            den += kernel(RADIUS_DENSITY, dist);
-        }
+        Vector3 diff = s.center - center;
+        float r2 = diff.dot(diff);
+        den += MASS * poly6(RADIUS_DENSITY, r2);
     }
 
     density = den;
-    pressure = K_PRESSURE * (density - 0.5f);
-    //pressure = K_PRESSURE * std::max(0.0f, density - DENSITY_ID);
-    if (pressure < 0) {
-        pressure *= 0.1f;
-    }
-    std::cout << pressure << "\n";
+    pressure = K_PRESSURE * (density - DENSITY_ID);
+    // negatif ??
 
-    color.r = velocity.norm() * 2;
-    color.g = center.y / 50;
-
-    //std::cout << "den: " << den << "\n";
-    //std::cout << "pres: " << pressure << "\n";
+    //color.r = velocity.norm() * 2;
+    color.g = den * 180;
 }
 
 void Sphere::calculate_border()
@@ -88,33 +83,14 @@ void Sphere::calculate_border()
 
 }
 
-float Sphere::Calculate_dt()
+void Sphere::update_pos(float dt)
 {
-    float now = (float)glfwGetTime();
-    if (last_time == 0.0f) last_time = now;
-    float dt = now - last_time;
-    last_time = now;
-    if (dt > 0.05f) dt = 0.05f;
-    return dt;
-}
-
-
-
-void Sphere::update_pos(float a)
-{
-
-    float dt = a;
-    dt = Calculate_dt();
-    if (density != 0) {
-        //std::cout << velocity << " old\n";
+    if (density > 1e-6f) {
         velocity = velocity + (force / density) * dt;
-        //std::cout << velocity << " new\n";
     }
 
-    //calculate_gravity(dt);
+    calculate_gravity(dt);
     center = center + (velocity * dt);
 
     calculate_border();
-
-    //velocity = velocity * 0.994f;
 }
